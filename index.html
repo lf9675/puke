@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>80分升级 - V9 · 手机手牌与简洁操作版</title>
+    <title>80分升级 - V10 · 原版布局 · 自主亮主修正版</title>
     <style>
         :root { --bg: #0d3b1b; --gold: #f39c12; --panel: rgba(0, 0, 0, 0.8); }
         body, html { margin: 0; padding: 0; width: 100vw; height: 100vh; overflow: hidden; background: var(--bg); font-family: "Microsoft YaHei", sans-serif; color: white; }
@@ -72,14 +72,6 @@
         #review-status,#review-notice {font-size:12px;color:#d4e2de;margin:8px 0;}
         .fx-ko { color: #ff4757; text-shadow: 0 10px 30px black, 0 0 40px #ff4757; font-size: 100px; font-style: italic;}
         @keyframes popOut { 0% { opacity: 0; transform: translate(-50%, -30%) scale(0.2); } 15% { opacity: 1; transform: translate(-50%, -50%) scale(1.3); } 80% { opacity: 1; transform: translate(-50%, -50%) scale(1); } 100% { opacity: 0; transform: translate(-50%, -80%) scale(0.8); } }
-        /* Scroll the hand's own full-width strip, never a centered clipped flex row. */
-        body,html {height:100%;height:100dvh;}
-        #hand-viewport {position:fixed;left:0;right:0;bottom:max(8px,env(safe-area-inset-bottom));height:150px;z-index:100;overflow-x:auto;overflow-y:hidden;overscroll-behavior-x:contain;touch-action:pan-x;-webkit-overflow-scrolling:touch;scroll-padding-inline:16px;}
-        #hand-container {position:relative;bottom:auto;left:auto;transform:none;width:max-content;min-width:100%;max-width:none;box-sizing:border-box;justify-content:center;padding:32px max(16px,env(safe-area-inset-right)) 8px max(16px,env(safe-area-inset-left));}
-        #hand-hint {position:fixed;bottom:158px;left:50%;transform:translateX(-50%);z-index:110;max-width:90vw;font-size:13px;color:#f8e2a0;background:#09271ce6;border-radius:8px;padding:3px 9px;text-align:center;pointer-events:none;}
-        #controls {bottom:190px;}
-        #review-open {bottom:190px;}
-        .card {touch-action:pan-x;}
         #bottom-reveal {position:fixed;left:50%;top:30%;transform:translate(-50%,-25%);z-index:300;width:min(580px,85vw);max-height:60dvh;overflow:auto;padding:16px;box-sizing:border-box;background:#153f2c;border:2px solid #f3c05b;border-radius:14px;text-align:center;}
         #bottom-reveal[hidden],#trick-readback[hidden] {display:none;}
         #bottom-reveal-cards {display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin:12px 0;}
@@ -87,53 +79,6 @@
         .reveal-card.red {color:#c22;}
         #trick-readback {position:fixed;left:50%;top:30%;transform:translateX(-50%);width:min(520px,70vw);max-height:38dvh;overflow:auto;z-index:190;background:#102f22f5;border:1px solid #8ead8c;border-radius:10px;padding:8px 12px;box-sizing:border-box;font-size:16px;}
         #trick-readback p {margin:6px 0;line-height:1.5;overflow-wrap:anywhere;}
-        @media (hover:none) {.card:hover {transform:none;}}
-        @media (max-width:1000px), (pointer:coarse) {
-            #ui-layer {top:max(6px,env(safe-area-inset-top));left:max(8px,env(safe-area-inset-left));right:max(8px,env(safe-area-inset-right));min-width:0;padding:6px 9px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 14px;}
-            #ui-layer hr {display:none;}
-            .info-item {font-size:11px;min-width:0;margin:3px 0;gap:5px;}
-            .info-item span:last-child {font-size:12px!important;overflow-wrap:anywhere;text-align:right;}
-            #controls {left:max(8px,env(safe-area-inset-left));right:max(8px,env(safe-area-inset-right));bottom:calc(7px + env(safe-area-inset-bottom));flex-direction:row;gap:6px;}
-            #controls button {flex:1;min-width:0;padding:10px 5px;font-size:13px;letter-spacing:0;border-radius:12px;min-height:44px;line-height:1.2;}
-            #hand-viewport {bottom:calc(60px + env(safe-area-inset-bottom));height:136px;}
-            #hand-container {padding-top:29px;padding-bottom:8px;}
-            #hand-container .card {width:58px;height:82px;}
-            #hand-container .card + .card {margin-left:-30px!important;}
-            #hand-container .card.suit-start {margin-left:-17px!important;}
-            #hand-container .card.selected {transform:translateY(-20px)!important;}
-            #hand-hint {bottom:calc(197px + env(safe-area-inset-bottom));font-size:12px;width:max-content;max-width:94vw;}
-            #review-open {top:calc(116px + env(safe-area-inset-top));right:max(8px,env(safe-area-inset-right));left:auto;bottom:auto;padding:6px 10px;font-size:11px;box-shadow:none;}
-            #table {height:100%;box-sizing:border-box;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:repeat(2,minmax(0,1fr));gap:8px;padding:calc(152px + env(safe-area-inset-top)) max(8px,env(safe-area-inset-right)) calc(225px + env(safe-area-inset-bottom)) max(8px,env(safe-area-inset-left));}
-            .slot {position:relative;top:auto;bottom:auto;left:auto;right:auto;transform:none;min-width:0;width:auto;height:auto;min-height:0;display:flex;flex-wrap:wrap;align-content:flex-start;justify-content:flex-start;align-items:flex-start;flex-direction:row;gap:4px;padding:22px 5px 5px;overflow:auto;box-sizing:border-box;}
-            .slot::before {content:attr(data-seat);position:absolute;top:3px;left:7px;font-size:12px;color:#e1e9de;}
-            .s-2 {grid-row:1;grid-column:1;} .s-1 {grid-row:1;grid-column:2;} .s-3 {grid-row:2;grid-column:1;} .s-0 {grid-row:2;grid-column:2;}
-            .slot .card {width:32px!important;height:49px!important;padding:3px;box-shadow:none;cursor:default;}
-            .slot .card span {font-size:14px!important;}
-            #trick-readback {top:calc(151px + env(safe-area-inset-top));width:calc(100% - 24px);max-height:calc(100dvh - 385px - env(safe-area-inset-bottom) - env(safe-area-inset-top));font-size:14px;}
-            #bottom-reveal {top:calc(116px + env(safe-area-inset-top));transform:translateX(-50%);max-height:calc(100dvh - 190px);}
-            .fx-text {font-size:clamp(22px,6vw,45px);max-width:90vw;}
-        }
-        @media (max-height:500px) and (orientation:landscape) {
-            #ui-layer {grid-template-columns:repeat(4,minmax(0,1fr));padding:4px 8px;gap:0 12px;}
-            #review-open {top:calc(60px + env(safe-area-inset-top));padding:4px 8px;}
-            #controls {bottom:calc(4px + env(safe-area-inset-bottom));}
-            #controls button {padding:5px;min-height:36px;}
-            #hand-viewport {bottom:calc(44px + env(safe-area-inset-bottom));height:104px;}
-            #hand-container {padding-top:24px;padding-bottom:3px;}
-            #hand-container .card {width:52px;height:66px;}
-            #hand-container .card + .card {margin-left:-27px!important;}
-            #hand-container .card.suit-start {margin-left:-14px!important;}
-            #hand-container .card span {font-size:16px!important;}
-            #hand-hint {bottom:calc(149px + env(safe-area-inset-bottom));font-size:11px;padding:1px 8px;}
-            #table {padding-top:calc(86px + env(safe-area-inset-top));padding-bottom:calc(171px + env(safe-area-inset-bottom));gap:4px;}
-            .slot {padding-top:18px;gap:3px;}
-            .slot .card {width:28px!important;height:37px!important;}
-            .slot .card span {font-size:11px!important;}
-            #trick-readback {top:calc(87px + env(safe-area-inset-top));max-height:calc(100dvh - 259px - env(safe-area-inset-bottom) - env(safe-area-inset-top));font-size:12px;}
-            #trick-readback p {margin:3px 0;}
-            #bottom-reveal {top:calc(60px + env(safe-area-inset-top));max-height:calc(100dvh - 110px);}
-        }
-
     </style>
 </head>
 <body>
@@ -159,8 +104,7 @@
     <div id="slot-3" class="slot s-3"></div>
 </div>
 
-<div id="hand-hint" role="status"></div>
-<div id="hand-viewport" tabindex="0" aria-label="手牌，可左右滑动"><div id="hand-container"></div></div>
+<div id="hand-container"></div>
 
 <div id="controls">
     <button id="btn-call" onclick="game.playerCallTrump()">抢亮主</button>
@@ -171,7 +115,7 @@
 
 <button id="review-open" onclick="game.recorder.open()">📝 复盘／标记问题</button>
 <section id="review-panel" hidden role="dialog" aria-label="复盘与问题记录">
-    <div style="display:flex;align-items:center;justify-content:space-between"><b>复盘与问题记录 · V9</b><button onclick="game.recorder.close()" aria-label="关闭复盘面板">关闭</button></div>
+    <div style="display:flex;align-items:center;justify-content:space-between"><b>复盘与问题记录 · V10</b><button onclick="game.recorder.close()" aria-label="关闭复盘面板">关闭</button></div>
     <div id="review-status"></div>
     <div>游戏自动记下每一手牌。疑似失误先留待复核，不会自动修改策略。记录留在当前浏览器，不会自动上传。</div>
     <label for="review-round">选择已保留的牌局</label>
@@ -323,7 +267,7 @@ class GameRecorder {
         const g=this.game;
         if(g.phase!=='PLAYING') return null;
         let id;do {id=`${Date.now().toString(36)}-${++this.idCounter}`;}while(this.db.rounds.some(r=>r.id===id));
-        this.active={id,engineVersion:'V9',startedAt:new Date().toISOString(),status:'playing',
+        this.active={id,engineVersion:'V10',startedAt:new Date().toISOString(),status:'playing',
             rules:{trumpSuit:g.trumpSuit,currentRank:g.currentRank,dealer:g.dealer,teamRanks:[...g.teamRanks],
                 aiSettings:this.clone(g.aiSettings),target:80,bottomRule:'单张2倍，对子4倍，连对4的对数次方（沿用本游戏）'},
             initialHands:g.hands.map(h=>this.cards(h)),bottom:this.cards(g.bottomCards),
@@ -450,7 +394,7 @@ class GameRecorder {
             for(const e of r.events) if(e.seat!==0) {e.decision=null;delete e.requestedIds;}
             for(const i of r.issues) {delete i.alternativeIds;}
         }
-        return {schema:'sichuan80-review',schemaVersion:1,engineVersion:'V9',exportedAt:new Date().toISOString(),
+        return {schema:'sichuan80-review',schemaVersion:1,engineVersion:'V10',exportedAt:new Date().toISOString(),
             notes:['疑似失误与人工标记都需要复核，不等于最佳策略结论。','已结束/已中断牌局含全部初始牌与出牌过程，供离线复现；出牌AI不读取这些记录。','进行中的牌局隐藏其他三家的初始牌、未知底牌及机器人未出候选。'],
             retention:{maxRounds:20,pruned:this.db.pruned||0},rounds};
     }
@@ -523,7 +467,7 @@ class TractorEngine {
         this.turn = 0; this.phase = 'READY'; this.firstPlayerOfRound = -1;
         this.lastTrickLeadCards = [];
         this.pauseDealing = false;
-        this.dealEpoch=0;this.dealingFinished=false;this.trickTimer=null;
+        this.auctionTimer=null;this.auctionSeconds=6;this.dealEpoch=0;this.dealingFinished=false;this.trickTimer=null;
         this.auctionHistory=[];this.revealedBottom=[];this.bottomDecision=null;this.bottomRevealIndex=0;
         this.overturnUsed = [false, false, false, false]; // 每位玩家只能反主一次 = [[false,false,false,false,false],[false,false,false,false,false],[false,false,false,false,false],[false,false,false,false,false]];
         this.suitPlayedCount = {0:0, 1:0, 2:0, 3:0};
@@ -603,7 +547,7 @@ class TractorEngine {
     }
 
     async startGame() {
-        const epoch=++this.dealEpoch;clearTimeout(this.trickTimer);this.trickTimer=null;
+        const epoch=++this.dealEpoch;clearTimeout(this.auctionTimer);this.auctionTimer=null;clearTimeout(this.trickTimer);this.trickTimer=null;
         this.dealingFinished=false;this.auctionHistory=[];this.revealedBottom=[];this.bottomDecision=null;this.bottomRevealIndex=0;this.pauseMode=null;
         document.getElementById('bottom-reveal').hidden=true;
         document.getElementById('trick-readback').hidden=true;
@@ -620,6 +564,7 @@ class TractorEngine {
         btnCall.disabled = false;
         
         document.getElementById('btn-overturn').disabled = false;
+        document.getElementById('btn-overturn').innerText='反主牌';
         document.getElementById('btn-revolution').style.display = 'none';
         document.getElementById('btn-play').disabled = true;
         this.lastTrickLeadCards = [];
@@ -663,7 +608,23 @@ class TractorEngine {
         }
         if(epoch!==this.dealEpoch)return;
         this.bottomCards=deck;this.dealingFinished=true;
-        this.showFX('发牌完成，可继续亮主或反主');this.updateUI();
+        for(const seat of [1,2,3])this.aiTryCall(seat);
+        this.showFX('发牌完成，6秒后自动继续\n亮主／反主请点击对应按钮');
+        this.scheduleAuctionClose();
+    }
+
+    scheduleAuctionClose() {
+        clearTimeout(this.auctionTimer);this.auctionSeconds=6;
+        const epoch=this.dealEpoch;
+        const tick=()=>{
+            if(epoch!==this.dealEpoch||this.phase!=='DEALING'||!this.dealingFinished)return;
+            // Never resolve an auction while the human is selecting a bid.
+            if(this.pauseDealing)this.auctionSeconds=6;
+            else this.auctionSeconds--;
+            if(this.auctionSeconds<=0){this.finishDealing();return;}
+            this.updateUI();this.auctionTimer=setTimeout(tick,1000);
+        };
+        this.updateUI();this.auctionTimer=setTimeout(tick,1000);
     }
 
     recordAuction(seat,kind,cards=[]) {
@@ -674,8 +635,9 @@ class TractorEngine {
     finishDealing() {
         if(this.phase!=='DEALING'||!this.dealingFinished)return;
         if(this.pauseDealing)return alert('请先确认或取消正在选择的亮主／反主。');
-        for(const seat of [1,2,3])this.aiTryCall(seat);
+        clearTimeout(this.auctionTimer);this.auctionTimer=null;this.dealingFinished=false;
         this.phase='AUCTION_CLOSED';
+        document.querySelectorAll('#hand-container .card.selected').forEach(el=>el.classList.remove('selected'));
         document.getElementById('btn-call').disabled=true;document.getElementById('btn-overturn').disabled=true;
         document.getElementById('btn-play').disabled=true;
         if(this.trumpSuit===-1)this.beginBottomReveal();
@@ -2500,7 +2462,7 @@ class TractorEngine {
         choices.sort((a,b)=>(a.sim.secure?0:1)-(b.sim.secure?0:1) || a.sim.risk-b.sim.risk || a.cost-b.cost);
         const b=choices[0];
         if(!b) return null;
-        return {cards:b.cards,kind:'V9 对家分牌护航',score:100*(1-b.sim.risk)-b.cost,
+        return {cards:b.cards,kind:'V10 对家分牌护航',score:100*(1-b.sim.risk)-b.cost,
             reasons:[`我方暂时领先，但桌面${ctx.tablePoints}分仍可能被后手抢走`,b.sim.secure?'以最低代价封住后手':'降低后手压过或反毙风险，不把未知断门当作安全']};
     }
 
@@ -2521,7 +2483,7 @@ class TractorEngine {
         const breaks=this.getPairs(this.hands[pidx].filter(c=>c.isTrump)).some(p=>p.filter(c=>b.cards.includes(c)).length===1);
         const expensive=breaks || b.cards.some(c=>c.rankIdx>=13);
         if(!last && table===0 && expensive && !followup && candidates.some(x=>this.phase3SimulateCandidate(pidx,x.cards).winner!==pidx)) return null;
-        return {cards:b.cards,kind:'V9 断门毙牌抢权',score:b.value,
+        return {cards:b.cards,kind:'V10 断门毙牌抢权',score:b.value,
             reasons:[last?'最后一墩，优先保底或抠底':'敌方领先且我已断门，优先毙回牌权',b.sim.secure?'最低充分主牌可封口':'兼顾反毙风险、分数与主牌成本']};
     }
 
@@ -2612,7 +2574,7 @@ class TractorEngine {
         }
         let scored=candidates.map(x=>({...x,...this.phase3ScoreFollowCandidate(pidx,x.cards)})).sort((a,b)=>b.score-a.score);
         let best=scored[0];
-        return {cards:best.cards,kind:'V9 合法跟牌与牌权风险评估',score:best.score,reasons:best.reasons,
+        return {cards:best.cards,kind:'V10 合法跟牌与牌权风险评估',score:best.score,reasons:best.reasons,
             top:scored.slice(0,5).map(x=>({cards:x.cards,score:x.score,tag:x.tag}))};
     }
 
@@ -2794,7 +2756,7 @@ class TractorEngine {
             if(avoidedPoints) best.reasons.push('已排除无保护分牌：外面的大牌/匹配主牌未排除时不主动送分');
             if(!protectedPool.length) best.reasons.push('仅余风险分牌可出，按损失与牌权选择，无法保证保住全部分');
         }
-        return best?{cards:best.cards,kind:'V9 首发：副牌窗口、结构保留与断门推理',score:best.score,reasons:best.reasons,
+        return best?{cards:best.cards,kind:'V10 首发：副牌窗口、结构保留与断门推理',score:best.score,reasons:best.reasons,
             top:scored.slice(0,5).map(x=>({cards:x.cards,score:x.score,tag:x.tag}))}:null;
     }
 
@@ -3924,7 +3886,7 @@ class TractorEngine {
     }
 
     async aiTurn() {
-        if (this.phase !== 'PLAYING' || this.turn === -1) return;
+        if (this.phase !== 'PLAYING' || ![1,2,3].includes(this.turn)) return;
         try {
             let pidx = this.turn, hand = this.hands[pidx], first = this.played[this.firstPlayerOfRound];
             let toPlay = [];
@@ -5087,8 +5049,6 @@ class TractorEngine {
 
     renderHand(isSortAnim) {
         const c = document.getElementById('hand-container');
-        const viewport=document.getElementById('hand-viewport'), scroll=viewport.scrollLeft;
-        const selected=new Set(this.getSelected().map(c=>c.id));
         c.innerHTML = '';
         let lastSuit = -1;
         let lastIsTrump = false;
@@ -5106,42 +5066,17 @@ class TractorEngine {
             lastIsTrump = card.isTrump;
             lastSuit = card.suit;
 
-            div.style.marginLeft = i === 0 ? '0' : `-${48 - extraMargin}px`;
-            if(extraMargin)div.classList.add('suit-start');
-            if(selected.has(card.id))div.classList.add('selected');
-            div.dataset.cardId=String(card.id);div.setAttribute('role','button');div.tabIndex=0;
-            div.setAttribute('aria-label',card.getLabel()+(card.isTrump?'，主牌':''));div.setAttribute('aria-pressed',String(selected.has(card.id))); 
+            div.style.marginLeft = i === 0 ? '0' : `-${48 - extraMargin}px`; 
             
             if (isSortAnim) {
                 div.style.transform = `translateY(-50px) rotate(${Math.random()*10-5}deg)`;
                 setTimeout(() => div.style.transform = '', i * 20);
             }
             div.innerHTML = `<span style="font-size:16px;font-weight:bold;">${card.getLabel().slice(0,1)}</span><span style="font-size:22px;margin-top:4px;">${card.getLabel().slice(1)}</span>`;
-            div.onclick=()=>{
-                if(Date.now()<(this.handDragUntil||0))return;
-                if((this.phase==='PLAYING'&&this.turn===0)||this.phase==='BURYING'||this.phase==='DEALING') {
-                    div.classList.toggle('selected');div.setAttribute('aria-pressed',String(div.classList.contains('selected')));this.updateHandHint();
-                }
-            };
-            div.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();div.onclick();}};
+            div.onclick = () => { if(this.phase === 'PLAYING' && this.turn === 0) div.classList.toggle('selected'); else if(this.phase === 'BURYING' || this.phase === 'DEALING') div.classList.toggle('selected'); };
             div.cardData = card;
             c.appendChild(div);
         });
-        viewport.scrollLeft=scroll;this.updateHandHint();
-    }
-
-    updateHandHint() {
-        const box=document.getElementById('hand-hint');if(!box)return;
-        const count=this.getSelected().length,total=this.hands[0].length;
-        box.textContent=this.phase==='BURYING'&&this.dealer===0?`庄家埋底：已选 ${count} / 8 张 · 手牌 ${total} 张 · 左右滑动查看`:`手牌 ${total} 张 · 已选 ${count} 张 · 左右滑动查看`;
-    }
-
-    setupHandScrolling() {
-        const viewport=document.getElementById('hand-viewport');let down=null;
-        viewport.addEventListener('pointerdown',e=>{down={x:e.clientX,y:e.clientY};},{passive:true});
-        viewport.addEventListener('pointermove',e=>{if(down&&Math.hypot(e.clientX-down.x,e.clientY-down.y)>8)this.handDragUntil=Date.now()+350;},{passive:true});
-        viewport.addEventListener('pointerup',()=>{down=null;},{passive:true});
-        viewport.addEventListener('pointercancel',()=>{down=null;this.handDragUntil=Date.now()+350;},{passive:true});
     }
 
     renderTable() {
@@ -5174,19 +5109,20 @@ class TractorEngine {
         document.getElementById('score-ui').innerText = this.score;
         document.getElementById('dealer-score-ui').innerText = this.dealerScore;
         
+        const bid=this.auctionHistory[this.auctionHistory.length-1];
+        if(bid) document.getElementById('trump-ui').innerText+=bid.seat===null?'（翻底定主）':`（${NAMES[bid.seat]}亮／反）`;
         document.getElementById('dealer-ui').innerText = this.dealer === -1 ? "未定" : NAMES[this.dealer];
         document.getElementById('camp-ui').innerText = this.dealer === -1 ? "-" : ((this.dealer % 2 === 0) ? "【你方庄】" : "【对方庄】");
         
         document.body.dataset.phase=this.phase;
-        this.updateHandHint();
         if(this.phase==='TRICK_REVIEW') {
             document.getElementById('turn-ui').innerText='等待你看完本墩';
             document.getElementById('btn-play').innerText='看完了，继续';document.getElementById('btn-play').disabled=false;
         } else if(this.phase==='REVEALING') {
             document.getElementById('turn-ui').innerText='公开翻底牌定主';document.getElementById('btn-play').disabled=true;
         } else if(this.phase==='DEALING') {
-            document.getElementById('turn-ui').innerText=this.dealingFinished?'等待结束抢主':'发牌抢主中';
-            document.getElementById('btn-play').innerText=this.dealingFinished?'结束抢主':'发牌中';document.getElementById('btn-play').disabled=!this.dealingFinished;
+            document.getElementById('turn-ui').innerText=this.pauseDealing?'请选择后确认；不亮请取消选牌再确认':this.dealingFinished?`抢主中，${this.auctionSeconds}秒后继续`:'发牌抢主中';
+            document.getElementById('btn-play').innerText=this.dealingFinished?'不抢主，继续':'发牌中';document.getElementById('btn-play').disabled=!this.dealingFinished||this.pauseDealing;
         } else if (this.phase === 'PLAYING') {
             document.getElementById('turn-ui').innerText = this.turn === -1 ? "结算中..." : NAMES[this.turn];
             document.getElementById('btn-play').disabled = (this.turn !== 0);
@@ -5208,7 +5144,7 @@ class TractorEngine {
 }
 
 let game;
-window.onload = () => { game = new TractorEngine(); game.setupHandScrolling(); game.updateUI(); game.recorder.renderStatus(); };
+window.onload = () => { game = new TractorEngine(); game.updateUI(); game.recorder.renderStatus(); };
 window.addEventListener('pagehide',()=>{if(game) game.recorder.safe(()=>game.recorder.persist());});
 document.addEventListener('visibilitychange',()=>{if(document.hidden && game) game.recorder.safe(()=>game.recorder.persist());});
 </script>
